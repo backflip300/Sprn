@@ -49,6 +49,9 @@ public class Inputter {
 				rand.nextInt(100000);
 			}else if(charAt(i) == 'd'){
 				
+			}else if(charAt(i) == ' '){
+				continue;
+				
 			}
 		}
 
