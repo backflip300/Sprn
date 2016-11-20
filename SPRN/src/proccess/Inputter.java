@@ -23,20 +23,21 @@ public class Inputter {
 		for (int i = 0; i < input.length(); i++) {
 
 			char currentChar = input.charAt(i);
-
 			if (Character.isDigit(currentChar)) {
 				previousCut = i;
 				for (int a = i; a < input.length(); a++) {
-
-					if (Character.isDigit(input.charAt(a)) == false) {
+					if (Character.isDigit(input.charAt(a)) == false && input.charAt(a) != '.') {
 						inputCut(input, previousCut, a);
 						previousCut = a + 1;
-						i = a - 1;
-
+						i = a;
 						break;
 					} else if (a == input.length() - 1) {
 						inputCut(input, previousCut, a + 1);
 						previousCut = a + 1;
+						i = a;
+
+						break;
+
 					}
 				}
 				continue;
@@ -48,9 +49,9 @@ public class Inputter {
 				case ('#'):
 					i = input.length();
 					break;
-				case(' '):
-					
-				break;
+				case (' '):
+
+					break;
 				case ('r'):
 					Random rand = new Random();
 					stack.push(rand.nextInt(100000));
@@ -98,8 +99,8 @@ public class Inputter {
 
 	}
 
-	private void inputCut(String input, int trimStart, int TrimEnd) {
-		stack.push(negFlag * Integer.parseInt(input.substring(trimStart, TrimEnd)));
+	private void inputCut(String input, int trimStart, int trimEnd) {
+		stack.push(negFlag * Double.parseDouble(input.substring(trimStart, trimEnd)));
 		negFlag = 1;
 	}
 
