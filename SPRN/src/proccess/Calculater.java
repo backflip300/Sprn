@@ -1,8 +1,27 @@
 package proccess;
 
 public class Calculater {
-	public Calculater() {
-		//changed this
-		// TODO Auto-generated constructor stub
+	Stack stack = new Stack();
+	
+	public Calculater(Stack stack) {
+		this.stack = stack;
+	}
+	
+	
+	
+	public void divide(){
+		
+	}
+	public void Multiply(){
+		
+	}
+	public void Add(){
+		
+	}
+	public void Subtract(){
+		
+	}
+	public void Power(){
+		
 	}
 }

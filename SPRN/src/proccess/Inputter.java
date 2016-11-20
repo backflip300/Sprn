@@ -5,23 +5,26 @@ import java.util.Random;
 
 public class Inputter {
 
-	ArrayList<String> inputs = new ArrayList<String>();
-	int prevInputStatus = 0;
+	Stack stack = new Stack();
+	private int negFlag = 1;
+	Calculater calculater = new Calculater(stack);
 
 	// 0: started,1: number being input.
 
-	public Inputter(ArrayList<String> inputs) {
-		this.inputs = inputs;
+	public Inputter(Stack stack) {
+		this.stack = stack;
 	}
 
-	public boolean sortInput(String input) {
-		boolean finishedInput = false;
+	public void sortInput(String input) {
+
 		String InputTrim;
 		int previousCut = 0;
 
 		for (int i = 0; i < input.length(); i++) {
 
-			if (Character.isDigit(input.charAt(i))) {
+			char currentChar = input.charAt(i);
+
+			if (Character.isDigit(currentChar)) {
 				previousCut = i;
 				for (int a = i; a < input.length(); a++) {
 
@@ -34,36 +37,55 @@ public class Inputter {
 					} else if (a == input.length() - 1) {
 						inputCut(input, previousCut, a + 1);
 						previousCut = a + 1;
-						return false;
 					}
 				}
 				continue;
-			} else if (input.charAt(i) == '=') {
-				return true;
-			} else if (input.charAt(i) == '#') {
-				System.out.println("got here");
-				i = input.length();
-				
-			}else if(charAt(i) == 'r'){
-				Random rand = new Random();
-				rand.nextInt(100000);
-			}else if(charAt(i) == 'd'){
-				
-			}else if(charAt(i) == ' '){
-				continue;
-				
+			} else {
+				switch (currentChar) {
+				case ('='):
+					stack.peekTop();
+					break;
+				case ('#'):
+					i = input.length();
+					break;
+				case(' '):
+					
+				break;
+				case ('r'):
+					Random rand = new Random();
+					stack.push(rand.nextInt(100000));
+
+					break;
+				case ('d'):
+					stack.peekAll();
+					break;
+				case ('\\'):
+					calculater.divide();
+					break;
+				case ('*'):
+					calculater.Multiply();
+					break;
+				case ('+'):
+					calculater.Add();
+					break;
+				case ('^'):
+					calculater.Power();
+					break;
+				case ('-'):
+					if (i != input.length() && Character.isDigit(input.charAt(i + 1))) {
+						negFlag = -1;
+					} else {
+						calculater.divide();
+					}
+					break;
+				default:
+					System.out.println("incorrect input");
+					i = input.length();
+					break;
+				}
 			}
 		}
 
-		/*
-		 * for(int i = 0;i<input.length();i++){
-		 * if(Character.is(input.charAt(i)){ InputTrim =
-		 * input.substring(previousCut, i); previousCut = i+1;
-		 * System.out.println(InputTrim); } } if(previousCut != input.length()){
-		 * InputTrim = input.substring(previousCut,input.length());
-		 * System.out.println(InputTrim); }
-		 */
-		return finishedInput;
 	}
 
 	private char charAt(int i) {
@@ -73,12 +95,12 @@ public class Inputter {
 
 	private void printStack() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void inputCut(String input, int trimStart, int TrimEnd) {
-		inputs.add(input.substring(trimStart, TrimEnd));
-		System.out.println("input: " + input.substring(trimStart, TrimEnd));
+		stack.push(negFlag * Integer.parseInt(input.substring(trimStart, TrimEnd)));
+		negFlag = 1;
 	}
 
 }
