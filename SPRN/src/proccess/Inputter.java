@@ -5,18 +5,19 @@ import java.util.Random;
 
 public class Inputter {
 
-	Stack stack = new Stack();
+	Stack stack;
 	private int negFlag = 1;
-	Calculater calculater = new Calculater(stack);
+	Calculater calculater;
 
 	// 0: started,1: number being input.
 
 	public Inputter(Stack stack) {
 		this.stack = stack;
+		calculater = new Calculater(this.stack);
 	}
 
 	public void sortInput(String input) {
-
+		
 		String InputTrim;
 		int previousCut = 0;
 
@@ -29,7 +30,7 @@ public class Inputter {
 					if (Character.isDigit(input.charAt(a)) == false && input.charAt(a) != '.') {
 						inputCut(input, previousCut, a);
 						previousCut = a + 1;
-						i = a;
+						i = a-1;
 						break;
 					} else if (a == input.length() - 1) {
 						inputCut(input, previousCut, a + 1);
@@ -40,7 +41,6 @@ public class Inputter {
 
 					}
 				}
-				continue;
 			} else {
 				switch (currentChar) {
 				case ('='):
@@ -60,7 +60,7 @@ public class Inputter {
 				case ('d'):
 					stack.peekAll();
 					break;
-				case ('\\'):
+				case ('/'):
 					calculater.divide();
 					break;
 				case ('*'):
