@@ -3,8 +3,9 @@ package proccess;
 import java.util.Random;
 
 public class Inputter {
-
+	RandomNumber rand;
 	Stack stack;
+	boolean Octal;
 	private int negFlag = 1;
 	Calculater calculater;
 
@@ -13,30 +14,38 @@ public class Inputter {
 	public Inputter(Stack stack) {
 		this.stack = stack;
 		calculater = new Calculater(this.stack);
+		rand = new RandomNumber();
 	}
 
 	public void sortInput(String input) {
 		int previousCut = 0;
 
 		for (int i = 0; i < input.length(); i++) {
-
+			Octal = false;
 			char currentChar = input.charAt(i);
 			if (Character.isDigit(currentChar)) {
+				if (currentChar == '0') {
+					Octal = true;
+				}
 				previousCut = i;
 				for (int a = i; a < input.length(); a++) {
-					if (Character.isDigit(input.charAt(a)) == false && input.charAt(a) != '.') {
+					if (Character.isDigit(input.charAt(a)) == false) {
 						inputCut(input, previousCut, a);
 						previousCut = a + 1;
-						i = a-1;
+						i = a - 1;
 						break;
 					} else if (a == input.length() - 1) {
 						inputCut(input, previousCut, a + 1);
 						previousCut = a + 1;
 						i = a;
-
 						break;
-
 					}
+
+					/*
+					 * else if(Octal == true && (input.charAt(a) == '8'||
+					 * input.charAt(a) == '9')){ inputCut(input, previousCut,
+					 * a); previousCut = a + 1; i = a - 1; }
+					 */
 				}
 			} else {
 				switch (currentChar) {
@@ -47,38 +56,42 @@ public class Inputter {
 					i = input.length();
 					break;
 				case (' '):
-
 					break;
 				case ('r'):
-					Random rand = new Random();
-					stack.push(rand.nextInt(100000));
+					stack.push(rand.getRandom());
 
 					break;
 				case ('d'):
 					stack.peekAll();
 					break;
 				case ('/'):
-					calculater.divide();
+					if (!stack.checkUnderflow(2))
+						calculater.divide();
 					break;
 				case ('*'):
-					calculater.Multiply();
+					if (!stack.checkUnderflow(2))
+						calculater.Multiply();
 					break;
 				case ('+'):
-					calculater.Add();
+					if (!stack.checkUnderflow(2))
+						calculater.Add();
 					break;
 				case ('^'):
-					calculater.Power();
+					if (!stack.checkUnderflow(2))
+						calculater.Power();
 					break;
 				case ('-'):
-					if (i != input.length() && Character.isDigit(input.charAt(i + 1))) {
+					if (i != input.length()
+							&& Character.isDigit(input.charAt(i + 1))) {
 						negFlag = -1;
 					} else {
-						calculater.divide();
+						if (!stack.checkUnderflow(2))
+							calculater.divide();
 					}
 					break;
 				default:
-					System.out.println("incorrect input");
-					i = input.length();
+					System.err.println("Unrecognised operator or operand \""
+							+ currentChar + "\"");
 					break;
 				}
 			}
@@ -87,51 +100,37 @@ public class Inputter {
 	}
 
 	private void inputCut(String input, int trimStart, int trimEnd) {
-		String cutString = input.substring(trimStart,trimEnd);
+
+		if (stack.checkOverflow(1)) {
+			return;
+		}
+		String cutString = input.substring(trimStart, trimEnd);
 		Double toPush;
-		if(cutString.charAt(0) == '0'){
+		if (cutString.charAt(0) == '0') {
 			toPush = convertToOctal(cutString);
-		}else{
+		} else {
 			toPush = Double.parseDouble(input.substring(trimStart, trimEnd));
 		}
+
 		stack.push(negFlag * toPush);
 		negFlag = 1;
 	}
 
 	private Double convertToOctal(String toConvert) {
 		toConvert = toConvert.substring(1);
+		for (int i = 0; i < toConvert.length(); i++) {
+			if (toConvert.charAt(i) == '8' || toConvert.charAt(i) == '9') {
+				toConvert = toConvert.substring(0,i);
+			}
+		}
 		Double Octal = 0.0;
-		int decimalPointLocation = -1;
-		int startValue = 0;
-		int decimalOffset = 0;
-		int endValue = toConvert.length();
-		for(int i =0;i<toConvert.length();i++){
-			if(toConvert.charAt(i) == '.'){
-				System.out.println("has a decimal");
-				decimalPointLocation = i;
-				startValue = i -1;
-			}
-			if(toConvert.charAt(i) == '8' || toConvert.charAt(i) == '9'){
-				endValue = toConvert.length();
-			}
-		}
+		int startValue = toConvert.length() - 1;
 		
-		if(decimalPointLocation == -1){
-			System.out.println("no decimal");
-			startValue = toConvert.length()-1;
+		for (int i = 0; i < toConvert.length(); i++) {
+			Octal += Double.parseDouble(toConvert.substring(i, i + 1))
+					* Math.pow(8, startValue - (i));
 		}
-		System.out.println("dpl: " + decimalPointLocation);
-		for(int i =0;i<endValue;i++){
-			if(i == decimalPointLocation){
-				decimalOffset = -1;
-				continue;
-			}
-			System.out.println("start value" + startValue);
-			System.out.println("power" + Math.pow(8,  startValue-(i + decimalOffset)));
-			Octal += Double.parseDouble(toConvert.substring(i, i+1)) * Math.pow(8, startValue-(i + decimalOffset));
-		}
-		
-		
+
 		return Octal;
 	}
 

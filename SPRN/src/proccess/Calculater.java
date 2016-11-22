@@ -9,8 +9,8 @@ public class Calculater {
 	}
 	
 	public void divide(){
-		double numerator = stack.pop();
 		double denominator = stack.pop();
+		double numerator = stack.pop();
 		stack.push(numerator/denominator);
 	}
 	public void Multiply(){

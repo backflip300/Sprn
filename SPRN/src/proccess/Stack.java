@@ -4,17 +4,22 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Stack {
-	DecimalFormat format = new DecimalFormat("#.0");
-	private ArrayList<Double> stack;
-
+	DecimalFormat format = new DecimalFormat("#");
+	private ArrayList<Integer> stack;
+	int maxSize = 23;
 	public Stack() {
 		// TODO Auto-generated constructor stub
-		stack = new ArrayList<Double>();
+		stack = new ArrayList<Integer>();
 
 	}
 
 	public void push(double toAdd) {
-		stack.add(toAdd);
+		if(toAdd > 2147483647){
+			toAdd = 2147483647;
+		}else if(toAdd < -2147483647){
+			toAdd = -2147483647;
+		}
+		stack.add((int)toAdd);
 	}
 
 	public double pop() {
@@ -26,19 +31,28 @@ public class Stack {
 
 	public void peekAll() {
 		for (int i = 0; i < stack.size(); i++) {
-			double toPrint = stack.get(i);
-			if (toPrint % 1 != 0) {
+			int toPrint = stack.get(i);
 				System.out.println(toPrint);
-			} else
-				System.out.println((int)toPrint);
 		}
 	}
 
 	public void peekTop() {
-		double toPrint = stack.get(stack.size() - 1);
-		if (toPrint % 1 != 1) {
+		int toPrint = stack.get(stack.size() - 1);
 			System.out.println(toPrint);
-		} else
-			System.out.println((int)toPrint);
+	}
+	
+	public boolean checkUnderflow(int toRemove){
+		if (toRemove>stack.size()){
+			System.err.println("Stack underflow.");
+			return true;
+		}
+		return false;
+	}
+	public boolean checkOverflow(int toAdd){
+		if(toAdd + stack.size() > maxSize){
+			System.err.println("Stack overflow.");
+			return true;
+		}
+		return false;
 	}
 }
