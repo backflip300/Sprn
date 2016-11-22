@@ -1,6 +1,5 @@
 package proccess;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Inputter {
@@ -17,8 +16,6 @@ public class Inputter {
 	}
 
 	public void sortInput(String input) {
-		
-		String InputTrim;
 		int previousCut = 0;
 
 		for (int i = 0; i < input.length(); i++) {
@@ -89,19 +86,53 @@ public class Inputter {
 
 	}
 
-	private char charAt(int i) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private void printStack() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void inputCut(String input, int trimStart, int trimEnd) {
-		stack.push(negFlag * Double.parseDouble(input.substring(trimStart, trimEnd)));
+		String cutString = input.substring(trimStart,trimEnd);
+		Double toPush;
+		if(cutString.charAt(0) == '0'){
+			toPush = convertToOctal(cutString);
+		}else{
+			toPush = Double.parseDouble(input.substring(trimStart, trimEnd));
+		}
+		stack.push(negFlag * toPush);
 		negFlag = 1;
+	}
+
+	private Double convertToOctal(String toConvert) {
+		toConvert = toConvert.substring(1);
+		Double Octal = 0.0;
+		int decimalPointLocation = -1;
+		int startValue = 0;
+		int decimalOffset = 0;
+		int endValue = toConvert.length();
+		for(int i =0;i<toConvert.length();i++){
+			if(toConvert.charAt(i) == '.'){
+				System.out.println("has a decimal");
+				decimalPointLocation = i;
+				startValue = i -1;
+			}
+			if(toConvert.charAt(i) == '8' || toConvert.charAt(i) == '9'){
+				endValue = toConvert.length();
+			}
+		}
+		
+		if(decimalPointLocation == -1){
+			System.out.println("no decimal");
+			startValue = toConvert.length()-1;
+		}
+		System.out.println("dpl: " + decimalPointLocation);
+		for(int i =0;i<endValue;i++){
+			if(i == decimalPointLocation){
+				decimalOffset = -1;
+				continue;
+			}
+			System.out.println("start value" + startValue);
+			System.out.println("power" + Math.pow(8,  startValue-(i + decimalOffset)));
+			Octal += Double.parseDouble(toConvert.substring(i, i+1)) * Math.pow(8, startValue-(i + decimalOffset));
+		}
+		
+		
+		return Octal;
 	}
 
 }
