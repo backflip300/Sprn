@@ -1,5 +1,6 @@
 package proccess;
 
+
 import java.util.Random;
 
 public class Inputter {
